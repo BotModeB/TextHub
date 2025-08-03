@@ -1,6 +1,6 @@
 package com.TextHub.TextHub.Service;
 
-import com.TextHub.TextHub.Entity.CustomUserDetails;
+import com.TextHub.TextHub.Controller.CustomUserDetails;
 import com.TextHub.TextHub.Entity.User;
 import com.TextHub.TextHub.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

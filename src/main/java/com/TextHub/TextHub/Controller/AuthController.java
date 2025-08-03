@@ -20,9 +20,9 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @GetMapping({"/", "/index", "/index.html"})
+    @GetMapping({"/", "/home", "/index.html"})
     public String index() {
-        return "index"; // Возвращает index.html из templates/
+        return "index"; 
     }
 
     @GetMapping("/register")

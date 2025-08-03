@@ -1,8 +1,10 @@
-package com.TextHub.TextHub.Entity;
+package com.TextHub.TextHub.Controller;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.TextHub.TextHub.Entity.User;
 
 import java.util.Collection;
 import java.util.List;

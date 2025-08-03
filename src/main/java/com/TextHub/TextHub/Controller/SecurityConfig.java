@@ -35,26 +35,26 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                // .requestMatchers(
-                //     "/",
-                //     "/index",
-                //     "/index.html",
-                //     "/login",
-                //     "/login.html",
-                //     "/register",
-                //     "/register.html",
-                //     "/css/**",
-                //     "/js/**",
-                //     "/images/**",
-                //     "/favicon.ico"
-                // ).permitAll()
-                // .anyRequest().authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers(
+                    "/",
+                    "/home",
+                    "/index.html",
+                    "/login",
+                    "/login.html",
+                    "/register",
+                    "/register.html",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/favicon.ico"
+                ).permitAll()
+                .anyRequest().authenticated()
+                // .anyRequest().permitAll()
             )
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/perform_login")
-                .defaultSuccessUrl("/index", true)
+                .defaultSuccessUrl("/home", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
