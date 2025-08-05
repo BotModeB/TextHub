@@ -29,13 +29,26 @@ public class Like {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    // Геттеры и сеттеры
     public User getUser() {
-        return this.user;
+        return user;
     }
-
-    // Сеттер для пользователя
+    
     public void setUser(User user) {
         this.user = user;
     }
+    
+    public Post getPost() {
+        return post;
+    }
+    
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public Like(User user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
+
+    public Like() {}
 }

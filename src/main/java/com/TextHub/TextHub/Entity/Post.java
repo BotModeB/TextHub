@@ -8,7 +8,9 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,19 +35,42 @@ public class Post {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
+    
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Like> likes = new HashSet<>();
 
-    @Transient
-    public int getLikesCount() {
-        return likes.size();
+    public boolean isLikedBy(Long userId) {
+        return likes.stream().anyMatch(like -> like.getUser().getId().equals(userId));
     }
+
+    @Transient // Поле не сохраняется в БД
+    private boolean likedByCurrentUser;
+    
+    // Геттеры и сеттеры
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
+    }
+
+    public void setLikedByCurrentUser(boolean likedByCurrentUser) {
+        this.likedByCurrentUser = likedByCurrentUser;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }   
 
     @Transient
     public boolean isLikedByUser(User user) {
         return likes.stream().anyMatch(Like -> Like.getUser().equals(user));
     }
+    
+    @Transient 
+    private Integer likesCount;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

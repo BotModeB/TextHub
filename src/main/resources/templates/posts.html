@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Все посты | TextHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Raleway:wght@600&display=swap" rel="stylesheet">
@@ -304,27 +306,36 @@
             bottom: 0;
             z-index: 10;
         }
-        .btn-like {
+        .like-btn {
             background: none;
             border: none;
-            color: var(--accent-light);
             cursor: pointer;
-            transition: all 0.3s ease;
             padding: 0.5rem;
             font-size: 1rem;
+            color: var(--accent-light);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
         }
 
-        .btn-like:hover {
-            transform: scale(1.2);
-            color: #dc3545; /* Красный цвет при наведении */
+        .like-btn:hover {
+            transform: scale(1.1);
         }
 
-        .btn-like .fas {
-            color: #dc3545; /* Красный цвет для заполненного сердца */
+        .like-btn .fas {
+            color: #dc3545;
+        }
+
+        .like-btn.liked .far {
+            display: none;
+        }
+
+        .like-btn:not(.liked) .fas {
+            display: none;
         }
 
         .likes-count {
-            margin-left: 0.3rem;
             font-size: 0.9rem;
         }
 
@@ -668,16 +679,18 @@
                         </div>
                                             
                         <div class="post-actions">
-                            <!-- Кнопка лайка (видна всем, кроме автора) -->
-                            <div th:if="${#authentication.principal != 'anonymousUser' and !#authentication.principal.username.equals(post.user.login)}">
-                                <form th:action="@{'/posts/' + ${post.id} + '/like'}" method="post" class="btn-action-form">
-                                    <button type="submit" class="btn-action" style="background: none; border: none; color: var(--accent-light);">
-                                        <i class="far fa-heart"></i> 
-                                        <span th:text="${post.likesCount}">0</span>
-                                    </button>
-                                </form>
+                            <div class="like-container" th:attr="data-post-id=${post.id}">
+                                <button class="like-btn" 
+                                        th:classappend="${currentUserId != null and post.likedByCurrentUser} ? 'liked' : ''"
+                                        th:disabled="${currentUserId == null}">
+                                    <i th:class="${currentUserId != null and post.likedByCurrentUser} ? 'fas fa-heart' : 'far fa-heart'"></i>
+                                    <span class="likes-count" th:text="${post.likesCount}">0</span>
+                                </button>
                             </div>
-                            
+                                <!-- <button th:if="${user == null}" class="like-btn" onclick="location.href='/login'">
+                                    <i class="far fa-heart"></i>
+                                    <span class="likes-count" th:text="${post.likes?.size() ?: 0}">0</span>
+                                </button>                             -->
                             <!-- Кнопки редактирования/удаления (видны только автору) -->
                             <div th:if="${#authentication.principal.username.equals(post.user.login)}">
                                 <a th:href="@{'/posts/form?id=' + ${post.id}}" class="btn-action btn-edit">
@@ -716,5 +729,70 @@
     </footer>
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.like-btn').forEach(button => {
+                button.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    
+                    const container = this.closest('.like-container');
+                    const postId = container.getAttribute('data-post-id');
+                    const heartIcon = this.querySelector('i');
+                    const likesCountElement = this.querySelector('.likes-count');
+                    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+                    
+                    // Сохраняем исходное состояние
+                    const originalLikesCount = likesCountElement.textContent;
+                    const originalHeartClass = heartIcon.className;
+                    
+                    try {
+                        const response = await fetch(`/posts/${postId}/like`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                [csrfHeader]: csrfToken
+                            },
+                            credentials: 'include'
+                        });
+                        
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                            return;
+                        }
+                        
+                        if (!response.ok) {
+                            // Попробуем получить текст ошибки
+                            const errorText = await response.text();
+                            throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        // Обновляем UI
+                        likesCountElement.textContent = data.likesCount;
+                        
+                        if (data.isLikedByCurrentUser) {
+                            this.classList.add('liked');
+                            heartIcon.classList.replace('far', 'fas');
+                        } else {
+                            this.classList.remove('liked');
+                            heartIcon.classList.replace('fas', 'far');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                        
+                        // Восстанавливаем исходное состояние
+                        likesCountElement.textContent = originalLikesCount;
+                        heartIcon.className = originalHeartClass;
+                        
+                        alert(`Произошла ошибка: ${error.message}`);
+                    }
+                });
+            });
+        });
+    </script>
+    <script th:src="@{/webjars/font-awesome/6.4.0/js/all.min.js}"></script>
 </body>
 </html>

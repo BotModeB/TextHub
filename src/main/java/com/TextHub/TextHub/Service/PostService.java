@@ -11,5 +11,4 @@ public interface PostService {
     List<Post> getPostsByUser(User user);
     Post getPostById(Long id);
     Post updatePost(Post Post);
-    
 }
