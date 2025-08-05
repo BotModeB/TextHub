@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создать пост | TextHub</title>
+    <title>Профиль пользователя | TextHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Raleway:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,8 +38,8 @@
         }
         
         main {
-            flex-grow: 1; /* Занимает всё доступное пространство */
-            padding-bottom: 2rem; /* Отступ от футера */
+            flex-grow: 1;
+            padding-bottom: 2rem;
         }
 
         header {
@@ -127,43 +127,128 @@
             opacity: 1;
         }
         
-        .hero {
-            flex-grow: 1;
+        .user-profile {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 8rem 2rem 5rem;
+            gap: 1.5rem;
+        }
+
+        .username {
+            color: var(--accent-light) !important;
+            font-weight: 600 !important;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            background-color: rgba(93, 140, 90, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .username:hover {
+            background-color: rgba(93, 140, 90, 0.2) !important;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            color: var(--light) !important;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            opacity: 1;
+            text-decoration: underline;
         }
         
-        .hero-content {
+        .profile-container {
             max-width: 800px;
+            margin: 8rem auto 5rem;
+            padding: 2.5rem;
+            background: linear-gradient(145deg, var(--brown), var(--darker));
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(93, 140, 90, 0.15);
         }
         
-        .hero h1 {
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .profile-header h1 {
             font-family: 'Raleway', sans-serif;
-            font-size: 3.8rem;
-            margin-bottom: 1.8rem;
-            line-height: 1.2;
+            font-size: 2.5rem;
             background: linear-gradient(to right, var(--light), var(--accent-light));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
         
-        .hero p {
-            font-size: 1.35rem;
-            margin-bottom: 2.8rem;
-            color: var(--light);
-            opacity: 0.9;
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent);
+            margin-bottom: 1.5rem;
         }
         
-        .cta-buttons {
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-card {
+            background: rgba(18, 22, 18, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid rgba(93, 140, 90, 0.1);
+        }
+        
+        .info-card h3 {
+            color: var(--accent-light);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-card p {
+            color: var(--light);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(93, 140, 90, 0.2);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--light);
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .profile-actions {
             display: flex;
             justify-content: center;
-            gap: 1.8rem;
-            margin-top: 2rem;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
         }
         
         .btn {
@@ -194,56 +279,12 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
         }
         
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            padding: 5rem 0;
-            flex-wrap: wrap;
-            background-color: rgba(18, 22, 18, 0.6);
-            border-top: 1px solid rgba(93, 140, 90, 0.2);
-            border-bottom: 1px solid rgba(93, 140, 90, 0.2);
-        }
-        
-        .feature-card {
-            background: linear-gradient(145deg, var(--brown), var(--darker));
-            border-radius: 12px;
-            padding: 2.2rem;
-            width: 300px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            transition: all 0.4s ease;
-            border: 1px solid rgba(93, 140, 90, 0.15);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border-color: var(--accent);
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin: 1.5rem 0;
-            color: var(--light);
-            padding: 0 0.5rem;
-            min-height: 4.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .feature-card p {
-            color: var(--light);
-            opacity: 0.8;
-            line-height: 1.7;
-        }
         footer {
             background: linear-gradient(135deg, var(--darker), var(--brown));
             padding: 2.5rem 0;
             text-align: center;
             border-top: 1px solid rgba(93, 140, 90, 0.2);
-            margin-top: auto; /* Прижимает футер к низу */
+            margin-top: auto;
             width: 100%;
             position: sticky;
             bottom: 0;
@@ -289,36 +330,7 @@
             opacity: 1;
             transform: translateY(-3px);
         }
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .username {
-            color: var(--accent-light) !important;
-            font-weight: 600 !important;
-            padding: 0.6rem 1.2rem;
-            border-radius: 4px;
-            background-color: rgba(93, 140, 90, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .username:hover {
-            background-color: rgba(93, 140, 90, 0.2) !important;
-            transform: translateY(-2px);
-        }
-
-        .logout-btn {
-            color: var(--light) !important;
-            opacity: 0.8;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            opacity: 1;
-            text-decoration: underline;
-        }
+        
         /* Анимации */
         @keyframes float {
             0% { transform: translateY(0px); }
@@ -328,105 +340,6 @@
         
         .animate-float {
             animation: float 4s ease-in-out infinite;
-        }
-        .post-form {
-            max-width: 800px;
-            margin: 8rem auto 5rem;
-            padding: 2.5rem;
-            background: linear-gradient(145deg, var(--brown), var(--darker));
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(93, 140, 90, 0.15);
-        }
-        
-        .post-form h1 {
-            font-family: 'Raleway', sans-serif;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            background: linear-gradient(to right, var(--light), var(--accent-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .form-group {
-            margin-bottom: 1.8rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.8rem;
-            font-weight: 500;
-            color: var(--light);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 1rem;
-            background-color: rgba(18, 22, 18, 0.7);
-            border: 1px solid rgba(93, 140, 90, 0.3);
-            border-radius: 6px;
-            color: var(--text);
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-light);
-            box-shadow: 0 0 0 3px rgba(93, 140, 90, 0.2);
-        }
-        
-        textarea.form-control {
-            min-height: 200px;
-            resize: vertical;
-        }
-        
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2.5rem;
-        }
-
-        .post-form-container {
-            max-width: 800px;
-            margin: 6rem auto 4rem;
-            padding: 2rem;
-            background: linear-gradient(145deg, var(--brown), var(--darker));
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(93, 140, 90, 0.15);
-        }
-
-        .form-title {
-            font-family: 'Raleway', sans-serif;
-            font-size: 2.2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            background: linear-gradient(to right, var(--light), var(--accent-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 2rem;
-        }
-
-        .btn-danger {
-            background: rgba(220, 53, 69, 0.2);
-            border: 1px solid #dc3545;
-            color: #dc3545;
-            transition: all 0.3s ease;
-        }
-
-        .btn-danger:hover {
-            background: rgba(220, 53, 69, 0.3);
         }
 
         .logo-link {
@@ -452,7 +365,7 @@
                     <a th:href="@{'/users' + '/profile/'+ ${#authentication.principal.username}}" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
-                    <a th:href="@{/home}" class="logout-btn">Выйти</a>
+                    <a th:href="@{/logout}" class="logout-btn">Выйти</a>
                 </div>
             </div>
         </div>
@@ -462,46 +375,65 @@
         <div class="container">
             <a th:href="@{/users}">Поиск пользователей</a>
             <a th:href="@{/posts/public}">Посты</a>
-            <a href="#">Чаты</a>
-            <a href="#">Каналы</a>
+            <a th:href="@{/chats}">Чаты</a>
+            <a th:href="@{/channels}">Каналы</a>
         </div>
     </nav>
     
     <main>
-        <section class="post-form-container animate__animated animate__fadeIn">
-            <h1 th:text="${isEditMode} ? 'Редактировать пост' : 'Создать новый пост'"></h1>
-        
-            <form th:action="@{/posts/save}" th:object="${post}" method="post">
-                <input type="hidden" th:field="*{id}" th:if="${isEditMode}">
-                <!-- Поле заголовка -->
-                <div class="form-group">
-                    <label for="title">Заголовок</label>
-                    <input type="text" id="title" th:field="*{title}" class="form-control" required>
+        <section class="profile-container animate__animated animate__fadeIn">
+            <div class="profile-header">
+                <img src="https://via.placeholder.com/120" alt="Аватар пользователя" class="profile-avatar">
+                <h1 th:text="${user.username}">Имя пользователя</h1>
+            </div>
+            
+            <div class="profile-info">
+                <div class="info-card">
+                    <h3>Логин</h3>
+                    <p th:text="${user.login}">user123</p>
                 </div>
                 
-                <!-- Поле содержимого -->
-                <div class="form-group">
-                    <label for="content">Содержание</label>
-                    <textarea id="content" th:field="*{content}" class="form-control" rows="10" required></textarea>
+                <div class="info-card">
+                    <h3>Электронная почта</h3>
+                    <p th:text="${user.email}">user@example.com</p>
                 </div>
                 
-                <!-- Кнопки -->
-                <div class="form-actions">
-                    <div>
-                        <button type="submit" class="btn btn-primary">
-                            <span th:text="${isEditMode} ? 'Обновить' : 'Создать'"></span>
-                        </button>
-                    </div>
-                    <div th:if="${isEditMode}">
-                        <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post" 
-                            onsubmit="return confirm('Удалить этот пост?')">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> Удалить
-                            </button>
-                        </form>
-                    </div>
+                <div class="info-card">
+                    <h3>Дата регистрации</h3>
+                    <p th:text="${#temporals.format(user.registrationDate, 'dd.MM.yyyy')}">01.01.2023</p>
                 </div>
-            </form>
+                
+                <div class="info-card">
+                    <h3>Статус</h3>
+                    <p>Активный</p>
+                </div>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${user.postCount}">42</div>
+                    <div class="stat-label">Постов</div>
+                </div>
+                
+                <!-- <div class="stat-item">
+                    <div class="stat-value">128</div>
+                    <div class="stat-label">Подписчиков</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value">56</div>
+                    <div class="stat-label">Подписок</div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <a href="#" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i> Написать
+                </a>
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Подписаться
+                </a>
+            </div> -->
         </section>
     </main>
     

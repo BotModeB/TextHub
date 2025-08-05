@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создать пост | TextHub</title>
+    <title>Поиск пользователей | TextHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Raleway:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,8 +38,8 @@
         }
         
         main {
-            flex-grow: 1; /* Занимает всё доступное пространство */
-            padding-bottom: 2rem; /* Отступ от футера */
+            flex-grow: 1;
+            padding-bottom: 2rem;
         }
 
         header {
@@ -127,127 +127,138 @@
             opacity: 1;
         }
         
-        .hero {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 8rem 2rem 5rem;
-        }
-        
-        .hero-content {
+        .search-container {
             max-width: 800px;
+            margin: 8rem auto 3rem;
+            padding: 2.5rem;
+            background: linear-gradient(145deg, var(--brown), var(--darker));
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(93, 140, 90, 0.15);
         }
         
-        .hero h1 {
+        .search-title {
             font-family: 'Raleway', sans-serif;
-            font-size: 3.8rem;
-            margin-bottom: 1.8rem;
-            line-height: 1.2;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
             background: linear-gradient(to right, var(--light), var(--accent-light));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
         
-        .hero p {
-            font-size: 1.35rem;
-            margin-bottom: 2.8rem;
-            color: var(--light);
-            opacity: 0.9;
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1.8rem;
+        .search-input {
+            flex-grow: 1;
+            padding: 1rem;
+            background-color: rgba(18, 22, 18, 0.7);
+            border: 1px solid rgba(93, 140, 90, 0.3);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-light);
+            box-shadow: 0 0 0 3px rgba(93, 140, 90, 0.2);
+        }
+        
+        .search-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .users-list {
             margin-top: 2rem;
         }
         
-        .btn {
-            padding: 1.1rem 2.8rem;
+        .user-card {
+            background: rgba(18, 22, 18, 0.5);
             border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.15rem;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.3);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid var(--accent-light);
-            color: var(--accent-light);
-        }
-        
-        .btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-        }
-        
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            padding: 5rem 0;
-            flex-wrap: wrap;
-            background-color: rgba(18, 22, 18, 0.6);
-            border-top: 1px solid rgba(93, 140, 90, 0.2);
-            border-bottom: 1px solid rgba(93, 140, 90, 0.2);
-        }
-        
-        .feature-card {
-            background: linear-gradient(145deg, var(--brown), var(--darker));
-            border-radius: 12px;
-            padding: 2.2rem;
-            width: 300px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            transition: all 0.4s ease;
-            border: 1px solid rgba(93, 140, 90, 0.15);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border-color: var(--accent);
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin: 1.5rem 0;
-            color: var(--light);
-            padding: 0 0.5rem;
-            min-height: 4.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            border: 1px solid rgba(93, 140, 90, 0.1);
+            transition: all 0.3s ease;
         }
         
-        .feature-card p {
-            color: var(--light);
-            opacity: 0.8;
-            line-height: 1.7;
+        .user-card:hover {
+            background: rgba(18, 22, 18, 0.7);
+            transform: translateY(-3px);
         }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .user-login {
+            color: var(--accent-light);
+            font-size: 0.9rem;
+        }
+        
+        .user-actions a {
+            color: var(--light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            background-color: rgba(93, 140, 90, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .user-actions a:hover {
+            background-color: rgba(93, 140, 90, 0.2);
+        }
+        
+        .no-results {
+            text-align: center;
+            color: var(--light);
+            opacity: 0.7;
+            padding: 2rem;
+        }
+        
         footer {
             background: linear-gradient(135deg, var(--darker), var(--brown));
             padding: 2.5rem 0;
             text-align: center;
             border-top: 1px solid rgba(93, 140, 90, 0.2);
-            margin-top: auto; /* Прижимает футер к низу */
-            width: 100%;
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
+            margin-top: auto;
         }
 
         .footer-content {
@@ -289,6 +300,7 @@
             opacity: 1;
             transform: translateY(-3px);
         }
+        
         .user-profile {
             display: flex;
             align-items: center;
@@ -319,116 +331,7 @@
             opacity: 1;
             text-decoration: underline;
         }
-        /* Анимации */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
         
-        .animate-float {
-            animation: float 4s ease-in-out infinite;
-        }
-        .post-form {
-            max-width: 800px;
-            margin: 8rem auto 5rem;
-            padding: 2.5rem;
-            background: linear-gradient(145deg, var(--brown), var(--darker));
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(93, 140, 90, 0.15);
-        }
-        
-        .post-form h1 {
-            font-family: 'Raleway', sans-serif;
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            background: linear-gradient(to right, var(--light), var(--accent-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .form-group {
-            margin-bottom: 1.8rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.8rem;
-            font-weight: 500;
-            color: var(--light);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 1rem;
-            background-color: rgba(18, 22, 18, 0.7);
-            border: 1px solid rgba(93, 140, 90, 0.3);
-            border-radius: 6px;
-            color: var(--text);
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-light);
-            box-shadow: 0 0 0 3px rgba(93, 140, 90, 0.2);
-        }
-        
-        textarea.form-control {
-            min-height: 200px;
-            resize: vertical;
-        }
-        
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2.5rem;
-        }
-
-        .post-form-container {
-            max-width: 800px;
-            margin: 6rem auto 4rem;
-            padding: 2rem;
-            background: linear-gradient(145deg, var(--brown), var(--darker));
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(93, 140, 90, 0.15);
-        }
-
-        .form-title {
-            font-family: 'Raleway', sans-serif;
-            font-size: 2.2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            background: linear-gradient(to right, var(--light), var(--accent-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 2rem;
-        }
-
-        .btn-danger {
-            background: rgba(220, 53, 69, 0.2);
-            border: 1px solid #dc3545;
-            color: #dc3545;
-            transition: all 0.3s ease;
-        }
-
-        .btn-danger:hover {
-            background: rgba(220, 53, 69, 0.3);
-        }
-
         .logo-link {
             text-decoration: none;
             color: inherit;
@@ -452,7 +355,7 @@
                     <a th:href="@{'/users' + '/profile/'+ ${#authentication.principal.username}}" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
-                    <a th:href="@{/home}" class="logout-btn">Выйти</a>
+                    <a th:href="@{/logout}" class="logout-btn">Выйти</a>
                 </div>
             </div>
         </div>
@@ -468,40 +371,48 @@
     </nav>
     
     <main>
-        <section class="post-form-container animate__animated animate__fadeIn">
-            <h1 th:text="${isEditMode} ? 'Редактировать пост' : 'Создать новый пост'"></h1>
-        
-            <form th:action="@{/posts/save}" th:object="${post}" method="post">
-                <input type="hidden" th:field="*{id}" th:if="${isEditMode}">
-                <!-- Поле заголовка -->
-                <div class="form-group">
-                    <label for="title">Заголовок</label>
-                    <input type="text" id="title" th:field="*{title}" class="form-control" required>
-                </div>
-                
-                <!-- Поле содержимого -->
-                <div class="form-group">
-                    <label for="content">Содержание</label>
-                    <textarea id="content" th:field="*{content}" class="form-control" rows="10" required></textarea>
-                </div>
-                
-                <!-- Кнопки -->
-                <div class="form-actions">
-                    <div>
-                        <button type="submit" class="btn btn-primary">
-                            <span th:text="${isEditMode} ? 'Обновить' : 'Создать'"></span>
-                        </button>
-                    </div>
-                    <div th:if="${isEditMode}">
-                        <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post" 
-                            onsubmit="return confirm('Удалить этот пост?')">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-trash"></i> Удалить
-                            </button>
-                        </form>
-                    </div>
-                </div>
+        <section class="search-container animate__animated animate__fadeIn">
+            <h1 class="search-title">Поиск пользователей</h1>
+            
+            <form th:action="@{/users}" method="get" class="search-form">
+                <input 
+                    type="text" 
+                    name="query" 
+                    th:value="${query}"
+                    placeholder="Введите логин пользователя..." 
+                    class="search-input"
+                >
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Найти
+                </button>
             </form>
+            
+            <div class="users-list">
+                <div th:if="${users != null and !users.empty}">
+                    <div th:each="user : ${users}" class="user-card animate__animated animate__fadeInUp">
+                        <div class="user-info">
+                            <img src="https://via.placeholder.com/50" alt="Аватар" class="user-avatar">
+                            <div>
+                                <div class="user-name" th:text="${user.username}">Имя пользователя</div>
+                                <div class="user-login" th:text="'@' + ${user.login}">@логин</div>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <a th:href="@{'/users' + '/profile/'+ ${user.login}}">Профиль</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div th:if="${users != null and users.empty}" class="no-results">
+                    <i class="fas fa-user-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                    <p>Пользователи не найдены</p>
+                </div>
+                
+                <div th:if="${users == null}" class="no-results">
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                    <p>Введите логин для поиска пользователей</p>
+                </div>
+            </div>
         </section>
     </main>
     

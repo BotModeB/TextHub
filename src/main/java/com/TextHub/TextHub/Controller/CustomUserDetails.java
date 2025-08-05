@@ -40,7 +40,7 @@ public class CustomUserDetails implements UserDetails {
 
     // Для получения ID пользователя
     public Long getUserId() {
-        return user.getUserId();
+        return user.getId();
     }
 
     

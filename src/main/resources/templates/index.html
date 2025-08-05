@@ -320,12 +320,20 @@
         .animate-float {
             animation: float 4s ease-in-out infinite;
         }
+
+        .logo-link {
+            text-decoration: none;
+            color: inherit;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
     <header class="animate__animated animate__fadeInDown">
         <div class="container nav-container">
-            <div class="logo">TextHub</div>
+            <a th:href="@{/home}" class="logo-link">
+                <div class="logo">TextHub</div> 
+            </a>
             <div class="nav-links">
                 <!-- Если пользователь не аутентифицирован -->
                 <div th:unless="${#authentication.principal != 'anonymousUser'}">
@@ -335,7 +343,7 @@
                 
                 <!-- Если пользователь аутентифицирован -->
                 <div th:if="${#authentication.principal != 'anonymousUser'}" class="user-profile">
-                    <a th:href="@{/profile}" class="username">
+                    <a th:href="@{'/users' + '/profile/'+ ${#authentication.principal.username}}" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
                     <a th:href="@{/logout}" class="logout-btn">Выйти</a>
@@ -346,7 +354,7 @@
     
     <nav class="secondary-nav animate__animated animate__fadeIn animate__fadeInDown">
         <div class="container">
-            <a href="#">Поиск пользователей</a>
+            <a th:href="@{/users}">Поиск пользователей</a>
             <a th:href="@{/posts/public}">Посты</a>
             <a href="#">Чаты</a>
             <a href="#">Каналы</a>
@@ -367,7 +375,7 @@
                     Начните своё путешествие в мире текстов — создавайте, общайтесь, открывайте.
                 </p>
                 
-                <div class="cta-buttons">
+                <div class="cta-buttons" th:unless="${#authentication.principal != 'anonymousUser'}">
                     <a th:href="@{/register}" class="btn btn-primary animate__animated animate__fadeInLeft">Создать аккаунт</a>
                     <a th:href="@{/login}" class="btn btn-secondary animate__animated animate__fadeInRight">Войти</a>
                 </div>

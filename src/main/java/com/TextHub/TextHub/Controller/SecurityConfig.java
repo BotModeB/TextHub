@@ -49,18 +49,17 @@ public class SecurityConfig {
                     "/favicon.ico"
                 ).permitAll()
                 .anyRequest().authenticated()
-                // .anyRequest().permitAll()
             )
             .formLogin(form -> form
-                .loginPage("/login")
+                .loginPage("/home")
                 .loginProcessingUrl("/perform_login")
                 .defaultSuccessUrl("/home", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/perform_logout")
-                .logoutSuccessUrl("/login?logout=true")
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/home?logout=true")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()

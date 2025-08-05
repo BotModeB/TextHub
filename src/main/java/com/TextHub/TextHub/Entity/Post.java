@@ -1,6 +1,6 @@
 package com.TextHub.TextHub.Entity;
 
-
+import com.TextHub.TextHub.Entity.*;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -32,10 +34,18 @@ public class Post {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ColumnDefault("0")
-    @Column(name = "post_count", nullable = false)
-    private Integer postCount = 0;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Like> likes = new HashSet<>();
 
+    @Transient
+    public int getLikesCount() {
+        return likes.size();
+    }
+
+    @Transient
+    public boolean isLikedByUser(User user) {
+        return likes.stream().anyMatch(Like -> Like.getUser().equals(user));
+    }
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

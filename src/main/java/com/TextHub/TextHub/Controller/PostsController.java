@@ -99,4 +99,15 @@ public class PostsController {
         return "redirect:/posts/public";
     }
     
+    // @PostMapping("/{postId}/like")
+    // public String toggleLike(@PathVariable Long postId, 
+    //                    @AuthenticationPrincipal UserDetailsImpl userDetails,
+    //                    RedirectAttributes redirectAttributes) {
+    // User user = userRepository.findByUsername(userDetails.getUsername())
+    //     .orElseThrow(() -> new RuntimeException("User not found"));
+    
+    // postService.toggleLike(postId, user);
+    // return "redirect:/posts/public";
+    // }
+
 }
