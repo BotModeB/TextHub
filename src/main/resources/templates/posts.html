@@ -323,6 +323,10 @@
             transform: scale(1.1);
         }
 
+        .like-btn i {
+            transition: all 0.3s ease;
+        }
+
         .like-btn .fas {
             color: #dc3545;
         }
@@ -604,6 +608,32 @@
             color: inherit;
             display: inline-block;
         }
+        .logout-btn {
+            background: rgba(220, 53, 69, 0.15);
+            color: #dc3545 !important;
+            border: 1px solid #dc3545;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logout-btn i {
+            margin-right: 0.3rem;
+        }
     </style>
 </head>
 <body>
@@ -622,7 +652,12 @@
                     <a th:href="@{'/users' + '/profile/'+ ${#authentication.principal.username}}" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
-                    <a th:href="@{/logout}" class="logout-btn">Выйти</a>
+                    <form th:action="@{/logout}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -639,32 +674,17 @@
     
         <main>
         <section class="posts-container animate__animated animate__fadeIn">
-            <div class="posts-header">
-                <h1>Все посты</h1>
-                    <div class="post-actions-header">
-                    <a th:href="@{/posts/user-posts}" class="btn btn-secondary" th:if="${#authentication.principal != 'anonymousUser'}">
-                        <i class="fas fa-user"></i> Мои посты
-                    </a>
-                    <a th:href="@{/posts/form}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Новый пост
-                    </a>
-                </div>
-            </div>
-            
-            <div th:if="${posts == null or posts.empty}">
-                <div class="empty-posts animate__animated animate__fadeIn">
-                    <i class="fas fa-book-open"></i>
-                    <p>Пока нет ни одного поста.</p>
-                </div>
-            </div>
-            
             <div th:if="${posts != null and !posts.empty}">
                 <div th:each="post : ${posts}" class="post-card animate__animated animate__fadeInUp">
                     <div class="post-header">
                         <h2 class="post-title" th:text="${post.title}">Название поста</h2>
                         <div class="post-author">
                             <i class="fas fa-user"></i>
-                            <span th:text="${post.user.username}">Имя пользователя</span>
+                            <a th:href="@{'/users/profile/' + ${post.user.login}}" 
+                            th:text="${post.user.username}"
+                            style="text-decoration: none; color: inherit;">
+                                Имя пользователя
+                            </a>
                         </div>
                     </div>
                     
@@ -677,22 +697,18 @@
                             <i class="far fa-calendar-alt"></i>
                             <span th:text="${#temporals.format(post.date, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</span>
                         </div>
-                                            
+                        
                         <div class="post-actions">
                             <div class="like-container" th:attr="data-post-id=${post.id}">
                                 <button class="like-btn" 
-                                        th:classappend="${currentUserId != null and post.likedByCurrentUser} ? 'liked' : ''"
+                                        th:classappend="${post.likedByCurrentUser} ? 'liked' : ''"
                                         th:disabled="${currentUserId == null}">
-                                    <i th:class="${currentUserId != null and post.likedByCurrentUser} ? 'fas fa-heart' : 'far fa-heart'"></i>
+                                    <i th:class="${post.likedByCurrentUser} ? 'fas fa-heart' : 'far fa-heart'"></i>
                                     <span class="likes-count" th:text="${post.likesCount}">0</span>
                                 </button>
                             </div>
-                                <!-- <button th:if="${user == null}" class="like-btn" onclick="location.href='/login'">
-                                    <i class="far fa-heart"></i>
-                                    <span class="likes-count" th:text="${post.likes?.size() ?: 0}">0</span>
-                                </button>                             -->
-                            <!-- Кнопки редактирования/удаления (видны только автору) -->
-                            <div th:if="${#authentication.principal.username.equals(post.user.login)}">
+
+                            <div th:if="${#authentication.principal != 'anonymousUser' and #authentication.principal.username == post.user.login}">
                                 <a th:href="@{'/posts/form?id=' + ${post.id}}" class="btn-action btn-edit">
                                     <i class="fas fa-edit"></i> Редактировать
                                 </a>
@@ -735,16 +751,15 @@
                 button.addEventListener('click', async function(e) {
                     e.preventDefault();
                     
+                    if (this.disabled) {
+                        return;
+                    }
                     const container = this.closest('.like-container');
                     const postId = container.getAttribute('data-post-id');
                     const heartIcon = this.querySelector('i');
                     const likesCountElement = this.querySelector('.likes-count');
                     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
                     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-                    
-                    // Сохраняем исходное состояние
-                    const originalLikesCount = likesCountElement.textContent;
-                    const originalHeartClass = heartIcon.className;
                     
                     try {
                         const response = await fetch(`/posts/${postId}/like`, {
@@ -756,20 +771,17 @@
                             credentials: 'include'
                         });
                         
-                        if (response.redirected) {
-                            window.location.href = response.url;
+                        if (response.status === 401) {
+                            window.location.href = '/login';
                             return;
                         }
                         
                         if (!response.ok) {
-                            // Попробуем получить текст ошибки
-                            const errorText = await response.text();
-                            throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         
                         const data = await response.json();
                         
-                        // Обновляем UI
                         likesCountElement.textContent = data.likesCount;
                         
                         if (data.isLikedByCurrentUser) {
@@ -781,18 +793,12 @@
                         }
                         
                     } catch (error) {
-                        console.error('Ошибка:', error);
-                        
-                        // Восстанавливаем исходное состояние
-                        likesCountElement.textContent = originalLikesCount;
-                        heartIcon.className = originalHeartClass;
-                        
-                        alert(`Произошла ошибка: ${error.message}`);
+                        console.error('Error:', error);
+                        alert('Произошла ошибка при обновлении лайка. Пожалуйста, попробуйте позже.');
                     }
                 });
             });
         });
     </script>
-    <script th:src="@{/webjars/font-awesome/6.4.0/js/all.min.js}"></script>
 </body>
 </html>

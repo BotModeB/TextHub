@@ -1,34 +1,33 @@
 package com.TextHub.TextHub.Entity;
-
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+@Data
 public class PostDTO {
-    private Long postId;
+    private Long id;
+    
+    @NotBlank(message = "Title cannot be empty")
+    @Size(min = 3, max = 50, message = "Title must be between 3 and 50 characters")
     private String title;
+    
+    @NotBlank(message = "Content cannot be empty")
+    @Size(min = 10, max = 400, message = "Content must be between 10 and 400 characters")
     private String content;
     
-// Геттеры и сеттеры
-    public Long getPostId() {
-        return postId;
-    }
-
-    public void setId(Long postId) {
-        this.postId = postId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    private Long userId;
+    private String username;
+    private int likesCount;
+    private boolean likedByCurrentUser;
     
-    public String getContent() {
-        return content;
+    public static PostDTO fromPost(Post post) {
+        PostDTO dto = new PostDTO();
+        dto.setId(post.getId());
+        dto.setTitle(post.getTitle());
+        dto.setContent(post.getContent());
+        dto.setUserId(post.getUser().getId());
+        dto.setUsername(post.getUser().getUsername());
+        dto.setLikesCount(post.getLikesCount());
+        dto.setLikedByCurrentUser(post.isLikedByCurrentUser());
+        return dto;
     }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
 }

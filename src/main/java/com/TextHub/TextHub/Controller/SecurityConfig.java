@@ -16,8 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.Customizer;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +49,7 @@ public class SecurityConfig {
         }
     }
 
-    @Bean
+@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
@@ -62,6 +64,7 @@ public class SecurityConfig {
                     "/css/**",
                     "/js/**",
                     "/images/**",
+                    "/webjars/**",
                     "/favicon.ico",
                     "/posts/public"
                 ).permitAll()
@@ -78,18 +81,24 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/home?logout=true")
+                .logoutSuccessUrl("/login?logout=true")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             )
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers("/posts/*/like", "/posts/save", "/posts/*/delete", "/register")
             )
-            .addFilterAfter(new CsrfTokenLogger(), CsrfFilter.class)
             .sessionManagement(session -> session
                 .maximumSessions(1)
-                .maxSessionsPreventsLogin(false)
+                .maxSessionsPreventsLogin(true)
+            )
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.deny())
+                .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED))
+                .contentSecurityPolicy(csp -> csp
+                    .policyDirectives("default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https:; script-src 'self' 'unsafe-inline' https://kit.fontawesome.com https://cdnjs.cloudflare.com"))
             );
         
         return http.build();

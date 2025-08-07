@@ -55,8 +55,8 @@ public class Post {
         this.likedByCurrentUser = likedByCurrentUser;
     }
 
-    public int getLikesCount() {
-        return likesCount;
+public int getLikesCount() {
+        return likes != null ? likes.size() : 0;
     }
 
     public void setLikesCount(int likesCount) {

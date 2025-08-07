@@ -1,22 +1,25 @@
 package com.TextHub.TextHub.Entity;
 
 import jakarta.persistence.*;
+
 import lombok.Data;
+
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
+import java.util.ArrayList;
+import java.util.List;
 @Entity
 @Table(name = "users", 
-       uniqueConstraints = {
-           @UniqueConstraint(columnNames = "login", name = "uk_users_login"),
-           @UniqueConstraint(columnNames = "email", name = "uk_users_email")
-       })
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = "login", name = "uk_users_login"),
+            @UniqueConstraint(columnNames = "email", name = "uk_users_email")
+        })
 @Data
 public class User {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -25,10 +28,10 @@ public class User {
     @Column(nullable = false, length = 50)
     private String username;
 
-    @Column(nullable = false, length = 16,unique = true)
+    @Column(nullable = false, length = 16, unique = true)
     private String login;
 
-    @Column(nullable = false, length = 100,unique = true)
+    @Column(nullable = false, length = 100, unique = true)
     private String email;
 
     @Column(nullable = false, length = 100)
@@ -42,8 +45,9 @@ public class User {
     @Column(name = "post_count", nullable = false)
     private Integer postCount = 0;
 
-    // public void setPassword(String password) {
-    //     this.password = new BCryptPasswordEncoder().encode(password);
-    // }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
     
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 }
