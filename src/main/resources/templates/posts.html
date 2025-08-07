@@ -674,6 +674,20 @@
     
         <main>
         <section class="posts-container animate__animated animate__fadeIn">
+            <div class="posts-header">
+                <h1>Все посты</h1>
+                <div class="post-actions-header">
+                    <a th:href="@{/posts/form}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Новый пост
+                    </a>
+                </div>
+            </div>
+            <div th:if="${posts == null or posts.empty}">
+                <div class="empty-posts animate__animated animate__fadeIn">
+                    <i class="fas fa-book-open"></i>
+                    <p>Пока нет ни одного поста.</p>
+                </div>
+            </div>
             <div th:if="${posts != null and !posts.empty}">
                 <div th:each="post : ${posts}" class="post-card animate__animated animate__fadeInUp">
                     <div class="post-header">
