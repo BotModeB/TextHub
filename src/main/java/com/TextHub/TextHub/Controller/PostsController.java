@@ -55,17 +55,19 @@ public class PostsController {
         model.addAttribute("posts", posts);
         return "user-posts";
     }
+
     @GetMapping("/form")
     public String showForm(@RequestParam(required = false) Long id, Model model) {
-        PostDTO post = id != null ? 
-            PostDTO.fromPost(postService.getPostById(id)) : new PostDTO();
+        Post post = new Post();
+        if (id != null) {
+            post = postService.getPostById(id);
+        }
         model.addAttribute("post", post);
-        model.addAttribute("isEditMode", id != null);
         return "post-form";
     }
-    
+
     @PostMapping("/save")
-    public String savePost(@Valid @ModelAttribute PostDTO postDTO,
+    public String savePost(@Valid @ModelAttribute("post") Post post,
                             BindingResult bindingResult,
                             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -73,18 +75,22 @@ public class PostsController {
         }
         
         try {
-            if (postDTO.getId() != null) {
-                postService.updatePost(postDTO.getId(), postDTO);
-                redirectAttributes.addFlashAttribute("message", "Post updated");
+            PostDTO postDTO = new PostDTO();
+            postDTO.setTitle(post.getTitle());
+            postDTO.setContent(post.getContent());
+            
+            if (post.getId() != null) {
+                postService.updatePost(post.getId(), postDTO);
+                redirectAttributes.addFlashAttribute("message", "Пост успешно обновлен");
             } else {
-                postService.savePost(postDTO);
-                redirectAttributes.addFlashAttribute("message", "Post created");
+                Post savedPost = postService.savePost(postDTO);
+                redirectAttributes.addFlashAttribute("message", "Пост успешно создан");
             }
+            return "redirect:/posts/public";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Ошибка при сохранении поста: " + e.getMessage());
+            return "redirect:/posts/form";
         }
-        
-        return "redirect:/posts/public";
     }
     
     @PostMapping("/{id}/delete")

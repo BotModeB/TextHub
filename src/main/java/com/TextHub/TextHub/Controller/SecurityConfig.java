@@ -66,7 +66,8 @@ public class SecurityConfig {
                     "/images/**",
                     "/webjars/**",
                     "/favicon.ico",
-                    "/posts/public"
+                    "/posts/public",
+                    "/static/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/posts/*/like").authenticated()
                 .requestMatchers("/posts/**", "/user/**").authenticated()
@@ -88,7 +89,7 @@ public class SecurityConfig {
             )
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/posts/*/like", "/posts/save", "/posts/*/delete", "/register")
+                .ignoringRequestMatchers("/posts/*/like", "/posts/*/delete", "/register")
             )
             .sessionManagement(session -> session
                 .maximumSessions(1)
@@ -98,7 +99,7 @@ public class SecurityConfig {
                 .frameOptions(frame -> frame.deny())
                 .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED))
                 .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https:; script-src 'self' 'unsafe-inline' https://kit.fontawesome.com https://cdnjs.cloudflare.com"))
+                    .policyDirectives("default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https:; script-src 'self' 'unsafe-inline' https://kit.fontawesome.com https://cdnjs.cloudflare.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com"))
             );
         
         return http.build();

@@ -24,11 +24,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public Post savePost(PostDTO postDTO) {
         Post post = new Post();
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
-        post.setUser(userService.getCurrentUser());
+        User currentUser = userService.getCurrentUser();
+        post.setUser(currentUser);
+        
+        currentUser.setPostCount(currentUser.getPostCount() + 1);
+        
         return postRepository.save(post);
     }
     
