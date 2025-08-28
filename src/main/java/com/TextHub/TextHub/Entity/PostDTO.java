@@ -1,4 +1,6 @@
 package com.TextHub.TextHub.Entity;
+import java.time.Instant;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -18,16 +20,34 @@ public class PostDTO {
     private String username;
     private int likesCount;
     private boolean likedByCurrentUser;
+    private User user;
+    private Instant createdAt;
     
-    public static PostDTO fromPost(Post post) {
+    public User getUser() {
+        return user;
+    }
+    
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    public static PostDTO fromPost(Post post, Long currentUserId) {
         PostDTO dto = new PostDTO();
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setContent(post.getContent());
-        dto.setUserId(post.getUser().getId());
-        dto.setUsername(post.getUser().getUsername());
+        dto.setUser(post.getUser());
+        dto.setCreatedAt(post.getCreatedAt()); 
+        
+        if (post.getUser() != null) {
+            dto.setUserId(post.getUser().getId());
+            dto.setUsername(post.getUser().getUsername());
+        }
+        
         dto.setLikesCount(post.getLikesCount());
-        dto.setLikedByCurrentUser(post.isLikedByCurrentUser());
+        dto.setLikedByCurrentUser(currentUserId != null && 
+                                post.isLikedByUser(currentUserId));
+        
         return dto;
     }
 }

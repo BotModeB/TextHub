@@ -1,5 +1,8 @@
 package com.TextHub.TextHub.Service;
 import com.TextHub.TextHub.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import com.TextHub.TextHub.Repository.PostRepository;
 import com.TextHub.TextHub.Entity.*;
 
@@ -8,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,5 +86,18 @@ public class PostServiceImpl implements PostService {
         if (!post.getUser().getId().equals(currentUser.getId())) {
             throw new SecurityException("You don't have permission to modify this post");
         }
+    }
+
+    public Page<PostDTO> getPosts(Pageable pageable, Long currentUserId) {
+        Page<Post> posts = postRepository.findAllWithUserAndLikes(pageable);
+        
+        return posts.map(post -> PostDTO.fromPost(post, currentUserId));
+    }
+    
+    public PostDTO getPostById(Long id, Long currentUserId) {
+        Post post = postRepository.findByIdWithUserAndLikes(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        
+        return PostDTO.fromPost(post, currentUserId);
     }
 }

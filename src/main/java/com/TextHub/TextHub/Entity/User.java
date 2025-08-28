@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -18,6 +19,7 @@ import java.util.List;
             @UniqueConstraint(columnNames = "email", name = "uk_users_email")
         })
 @Data
+@BatchSize(size = 20)
 public class User {
     
     @Id

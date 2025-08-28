@@ -1,21 +1,34 @@
 package com.TextHub.TextHub.Entity;
 
-import com.TextHub.TextHub.Entity.*;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "posts")
 @Data
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Post.withUserAndLikes",
+        attributeNodes = {
+            @NamedAttributeNode("user"),
+            @NamedAttributeNode(value = "likes", subgraph = "likesSubgraph")
+        },
+        subgraphs = {
+            @NamedSubgraph(
+                name = "likesSubgraph",
+                attributeNodes = @NamedAttributeNode("user")
+            )
+        }
+    )
+})
 public class Post {
 
     @Id
@@ -31,32 +44,52 @@ public class Post {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant date;
+    private Instant createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 20)
     private Set<Like> likes = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+    
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public boolean isLikedByUser(Long userId) {
+        if (likes == null || userId == null) {
+            return false;
+        }
+        return likes.stream()
+                .anyMatch(like -> like.getUser() != null && 
+                                userId.equals(like.getUser().getId()));
+    }
+
+    public int getLikesCount() {
+        return likes.size();
+    }
 
     public boolean isLikedBy(Long userId) {
         return likes.stream().anyMatch(like -> like.getUser().getId().equals(userId));
     }
 
-    @Transient // Поле не сохраняется в БД
+    @Transient 
     private boolean likedByCurrentUser;
     
-    // Геттеры и сеттеры
     public boolean isLikedByCurrentUser() {
         return likedByCurrentUser;
     }
 
     public void setLikedByCurrentUser(boolean likedByCurrentUser) {
         this.likedByCurrentUser = likedByCurrentUser;
-    }
-
-public int getLikesCount() {
-        return likes != null ? likes.size() : 0;
     }
 
     public void setLikesCount(int likesCount) {
@@ -70,17 +103,4 @@ public int getLikesCount() {
     
     @Transient 
     private Integer likesCount;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-    
-    // Геттеры и сеттеры
-    public User getUser() {
-        return user;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

@@ -1,10 +1,14 @@
 package com.TextHub.TextHub.Controller;
+
 import com.TextHub.TextHub.Entity.*;
-import com.TextHub.TextHub.Repository.LikeRepository;
-import com.TextHub.TextHub.Repository.PostRepository;
 import com.TextHub.TextHub.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -13,6 +17,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
@@ -29,32 +35,48 @@ public class PostsController {
         this.likeService = likeService;
     }
     
-    @GetMapping("/public")
-    public String showPostsPage(Model model, 
-                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<Post> posts = postService.getAllPosts();
-        Long currentUserId = userDetails != null ? userDetails.getUserId() : null;
+    // @GetMapping("/public")
+    // public String showPostsPage(Model model, 
+    //                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+    //     List<Post> posts = postService.getAllPosts();
+    //     Long currentUserId = userDetails != null ? userDetails.getUserId() : null;
         
-        // Проверяем статус лайков для каждого поста
-        for (Post post : posts) {
-            if (currentUserId != null) {
-                post.setLikedByCurrentUser(post.isLikedBy(currentUserId));
-            }
-            // Обновляем счетчик лайков
-            post.setLikesCount(post.getLikes().size());
-        }
+    //     // Проверяем статус лайков для каждого поста
+    //     for (Post post : posts) {
+    //         if (currentUserId != null) {
+    //             post.setLikedByCurrentUser(post.isLikedBy(currentUserId));
+    //         }
+    //         // Обновляем счетчик лайков
+    //         post.setLikesCount(post.getLikes().size());
+    //     }
         
-        model.addAttribute("posts", posts);
-        model.addAttribute("currentUserId", currentUserId);
-        return "posts";
-    }
-    @GetMapping("/user-posts")
-    public String showUserPostsPage(Model model, 
-                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<Post> posts = postService.getPostsByUser(userDetails.getUser());
-        model.addAttribute("posts", posts);
-        return "user-posts";
-    }
+    //     model.addAttribute("posts", posts);
+    //     model.addAttribute("currentUserId", currentUserId);
+    //     return "posts";
+    // }
+
+@GetMapping("/public")
+public Object getPosts(
+        @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable,
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        Model model,
+        HttpServletRequest request) {
+    Long currentUserId = userDetails != null ? userDetails.getUserId() : null;
+    Page<PostDTO> postsPage = postService.getPosts(pageable, currentUserId);
+    
+    model.addAttribute("postsPage", postsPage);
+    model.addAttribute("posts", postsPage.getContent()); // Вот это список!
+    model.addAttribute("currentUserId", currentUserId);
+    
+    return "posts";
+} 
+    // @GetMapping("/user-posts")
+    // public String showUserPostsPage(Model model, 
+    //                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
+    //     List<Post> posts = postService.getPostsByUser(userDetails.getUser());
+    //     model.addAttribute("posts", posts);
+    //     return "user-posts";
+    // }
 
     @GetMapping("/form")
     public String showForm(@RequestParam(required = false) Long id, Model model) {
@@ -83,7 +105,7 @@ public class PostsController {
                 postService.updatePost(post.getId(), postDTO);
                 redirectAttributes.addFlashAttribute("message", "Пост успешно обновлен");
             } else {
-                Post savedPost = postService.savePost(postDTO);
+                postService.savePost(postDTO);
                 redirectAttributes.addFlashAttribute("message", "Пост успешно создан");
             }
             return "redirect:/posts/public";
@@ -93,11 +115,11 @@ public class PostsController {
         }
     }
     
-    @PostMapping("/{id}/delete")
-    public String deletePost(@PathVariable Long id,
+    @PostMapping("/{postId}/delete")
+    public String deletePost(@PathVariable Long postId,
                             RedirectAttributes redirectAttributes) {
         try {
-            postService.deletePost(id);
+            postService.deletePost(postId);
             redirectAttributes.addFlashAttribute("message", "Post deleted");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

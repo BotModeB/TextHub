@@ -67,4 +67,5 @@ public class UserService {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return findByLogin(userDetails.getUsername());
     }
+    
 }
