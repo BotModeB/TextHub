@@ -2,6 +2,8 @@ package com.TextHub.TextHub.Controller;
 
 import com.TextHub.TextHub.Entity.*;
 import com.TextHub.TextHub.Service.*;
+
+import org.attoparser.dom.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,15 +26,18 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 @Controller
 @RequestMapping("/posts")
 public class PostsController {
     private final PostService postService;
     private final LikeService likeService;
+    private final CommentsService commentsService;
     @Autowired
-    public PostsController(PostService postService, LikeService likeService) {
+    public PostsController(PostService postService, LikeService likeService, CommentsService commentsService) {
         this.postService = postService;
         this.likeService = likeService;
+        this.commentsService = commentsService;
     }
     
     // @GetMapping("/public")
@@ -65,7 +70,7 @@ public Object getPosts(
     Page<PostDTO> postsPage = postService.getPosts(pageable, currentUserId);
     
     model.addAttribute("postsPage", postsPage);
-    model.addAttribute("posts", postsPage.getContent()); // Вот это список!
+    model.addAttribute("posts", postsPage.getContent()); 
     model.addAttribute("currentUserId", currentUserId);
     
     return "posts";
@@ -86,6 +91,45 @@ public Object getPosts(
         }
         model.addAttribute("post", post);
         return "post-form";
+    }
+    
+    @GetMapping("/{id}/page")
+    public String ShowPagePost(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        Long currentUserId = userDetails != null ? userDetails.getUserId() : null;
+        Post post = postService.getPostWithUserAndComments(id);
+        if (currentUserId != null) {
+            boolean isLiked = post.getLikes().stream()
+                    .anyMatch(like -> like.getUser().getId().equals(currentUserId));
+            post.setLikedByCurrentUser(isLiked);
+        }
+        model.addAttribute("post", post);
+        model.addAttribute("currentUserId", currentUserId);
+        model.addAttribute("comment", new Comments()); // Пустой объект для формы
+        
+        return "post-page"; 
+    }
+
+    @PostMapping("/{id}/page")
+    public String saveComment(@PathVariable Long id,
+                            @ModelAttribute("comment") Comments comment,
+                            @AuthenticationPrincipal CustomUserDetails userDetails,
+                            RedirectAttributes redirectAttributes) {
+        
+        try {
+            // Создаем DTO и заполняем его
+            CommentsDTO commentDTO = new CommentsDTO();
+            commentDTO.setContent(comment.getContent());
+            commentDTO.setPostId(id);
+            commentDTO.setUserId(userDetails.getUserId());
+            
+            commentsService.saveComment(commentDTO);
+            
+            redirectAttributes.addFlashAttribute("message", "Комментарий добавлен");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка при добавлении комментария: " + e.getMessage());
+        }
+        
+        return "redirect:/posts/" + id + "/page";
     }
 
     @PostMapping("/save")

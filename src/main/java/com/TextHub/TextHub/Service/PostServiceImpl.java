@@ -68,8 +68,7 @@ public class PostServiceImpl implements PostService {
             .orElseThrow(() -> new ResourceNotFoundException("Post not found with id: " + id));
     }
 
-    @Override
-    @Transactional
+
     public Post updatePost(Long id, PostDTO postDTO) {
         Post existingPost = getPostById(id);
         validatePostOwnership(existingPost);
@@ -80,7 +79,8 @@ public class PostServiceImpl implements PostService {
         
         return postRepository.save(existingPost);
     }
-    
+
+
     private void validatePostOwnership(Post post) {
         User currentUser = userService.getCurrentUser();
         if (!post.getUser().getId().equals(currentUser.getId())) {
@@ -88,16 +88,27 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+
     public Page<PostDTO> getPosts(Pageable pageable, Long currentUserId) {
         Page<Post> posts = postRepository.findAllWithUserAndLikes(pageable);
         
         return posts.map(post -> PostDTO.fromPost(post, currentUserId));
     }
-    
+
     public PostDTO getPostById(Long id, Long currentUserId) {
         Post post = postRepository.findByIdWithUserAndLikes(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found"));
         
         return PostDTO.fromPost(post, currentUserId);
+    }
+
+    @Override
+    public Post getPostWithUserAndComments(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Post ID cannot be null");
+        }
+        
+        return postRepository.findPostWithUserAndComments(id)
+                .orElseThrow(() -> new EntityNotFoundException("Пост с ID " + id + " не найден"));
     }
 }

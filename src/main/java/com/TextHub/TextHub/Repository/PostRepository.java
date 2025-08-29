@@ -20,7 +20,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p ORDER BY p.createdAt DESC")
     Page<Post> findAllWithUserAndLikes(Pageable pageable);
     
-    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user LEFT JOIN FETCH p.likes WHERE p.id = :id")
+    @Query("SELECT DISTINCT p FROM Post p LEFT JOIN FETCH p.user LEFT JOIN FETCH p.likes WHERE p.id = :id")
     Optional<Post> findByIdWithUserAndLikes(@Param("id") Long id);
     
     @Query("SELECT COUNT(l) FROM Like l WHERE l.post.id = :postId")
@@ -28,4 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     
     @Query("SELECT CASE WHEN COUNT(l) > 0 THEN true ELSE false END FROM Like l WHERE l.post.id = :postId AND l.user.id = :userId")
     boolean existsByPostIdAndUserId(@Param("postId") Long postId, @Param("userId") Long userId);
+
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.user LEFT JOIN FETCH p.comments WHERE p.id = :id")
+    Optional<Post> findPostWithUserAndComments(@Param("id") Long id);
 }

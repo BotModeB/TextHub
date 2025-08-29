@@ -16,4 +16,5 @@ public interface PostService {
     Post updatePost(Long id, PostDTO postDTO);
     Page<PostDTO> getPosts(Pageable pageable, Long currentUserId);
     PostDTO getPostById(Long id, Long currentUserId);
+    Post getPostWithUserAndComments(Long id);
 }

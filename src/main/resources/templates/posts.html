@@ -69,7 +69,7 @@
                         <h2 class="post-title" th:text="${post.title}">Название поста</h2>
                         <div class="post-author">
                             <i class="fas fa-user"></i>
-                            <a th:href="@{'/users' + ${post.user.login} +'/profile/'}" 
+                            <a th:href="@{'/users/' + ${post.user.login} +'/profile/'}" 
                             th:text="${post.user.username}"
                             style="text-decoration: none; color: inherit;">
                                 Имя пользователя
@@ -85,6 +85,13 @@
                         <div class="post-date">
                             <i class="far fa-calendar-alt"></i>
                             <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</span>
+                        </div>
+
+                        <div class="post-comments">
+                            <a th:href="@{'/posts/' + ${post.id} + '/page'}" class="comments-btn">
+                                <i class="far fa-comment"></i>
+                                <span class="comments-count">0</span>
+                            </a>
                         </div>
                         
                         <div class="post-actions">
