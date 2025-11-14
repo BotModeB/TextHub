@@ -33,10 +33,12 @@ public class PostsController {
     private final PostService postService;
     private final LikeService likeService;
     private final CommentsService commentsService;
+    private final UserService userService;
     @Autowired
-    public PostsController(PostService postService, LikeService likeService, CommentsService commentsService) {
+    public PostsController(PostService postService, LikeService likeService, CommentsService commentsService, UserService userService) {
         this.postService = postService;
         this.likeService = likeService;
+        this.userService = userService;
         this.commentsService = commentsService;
     }
     
@@ -92,6 +94,30 @@ public Object getPosts(
         model.addAttribute("post", post);
         return "post-form";
     }
+
+    @GetMapping("{login}/channel")
+    public String ShowChannelByUser(@PathVariable String login, @AuthenticationPrincipal CustomUserDetails userDetails, Model model){
+        User channelUser = userService.findByLogin(login);
+        List<Post> posts = postService.getPostsByUser(channelUser);
+                
+        Long currentUserId = userDetails != null ? userDetails.getUserId() : null;
+        for (Post post : posts) {
+            if (currentUserId != null) {
+                boolean isLiked = post.getLikes().stream()
+                        .anyMatch(like -> like.getUser().getId().equals(currentUserId));
+                post.setLikedByCurrentUser(isLiked);
+            }
+            post.setLikesCount(post.getLikes().size());
+            
+        }
+        
+        model.addAttribute("channelUser", channelUser);
+        model.addAttribute("posts", posts);
+        model.addAttribute("currentUserId", currentUserId);
+        
+        return "channel"; 
+        
+    }
     
     @GetMapping("/{id}/page")
     public String ShowPagePost(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
@@ -104,7 +130,7 @@ public Object getPosts(
         }
         model.addAttribute("post", post);
         model.addAttribute("currentUserId", currentUserId);
-        model.addAttribute("comment", new Comments()); // Пустой объект для формы
+        model.addAttribute("comment", new Comments()); 
         
         return "post-page"; 
     }
@@ -135,7 +161,8 @@ public Object getPosts(
     @PostMapping("/save")
     public String savePost(@Valid @ModelAttribute("post") Post post,
                             BindingResult bindingResult,
-                            RedirectAttributes redirectAttributes) {
+                            RedirectAttributes redirectAttributes,
+                            @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (bindingResult.hasErrors()) {
             return "post-form";
         }
@@ -152,7 +179,7 @@ public Object getPosts(
                 postService.savePost(postDTO);
                 redirectAttributes.addFlashAttribute("message", "Пост успешно создан");
             }
-            return "redirect:/posts/public";
+            return "redirect:/posts/" + userDetails.getUsername() + "/channel";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Ошибка при сохранении поста: " + e.getMessage());
             return "redirect:/posts/form";

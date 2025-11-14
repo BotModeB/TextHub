@@ -24,7 +24,7 @@
                 </div>
                 
                 <div th:if="${#authentication.principal != 'anonymousUser'}" class="user-profile">
-                    <a th:href="@{'/users' + ${#authentication.principal.username}} + '/profile/'" class="username">
+                    <a th:href="@{'/users/' + ${#authentication.principal.username}} + '/profile'" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
                     <form th:action="@{/logout}" method="post">
@@ -69,7 +69,7 @@
                         <h2 class="post-title" th:text="${post.title}">Название поста</h2>
                         <div class="post-author">
                             <i class="fas fa-user"></i>
-                            <a th:href="@{'/users/' + ${post.user.login} +'/profile/'}" 
+                            <a th:href="@{'/users/' + ${post.user.login} +'/profile'}" 
                             th:text="${post.user.username}"
                             style="text-decoration: none; color: inherit;">
                                 Имя пользователя
@@ -90,7 +90,6 @@
                         <div class="post-comments">
                             <a th:href="@{'/posts/' + ${post.id} + '/page'}" class="comments-btn">
                                 <i class="far fa-comment"></i>
-                                <span class="comments-count">0</span>
                             </a>
                         </div>
                         
@@ -104,14 +103,16 @@
                                 </button>
                             </div>
 
-                            <div th:if="${#authentication.principal != 'anonymousUser' and #authentication.principal.username == post.user.login}">
+                            <div th:if="${#authentication.principal != 'anonymousUser' and #authentication.principal.username == post.user.login}" 
+                                style="display: flex; gap: 0.8rem; align-items: center;">
                                 <a th:href="@{'/posts/form?id=' + ${post.id}}" class="btn-action btn-edit">
                                     <i class="fas fa-edit"></i> Редактировать
                                 </a>
                                 
                                 <form th:action="@{'/posts/' + ${post.id} + '/delete'}" 
                                     method="post"   
-                                    class="btn-action-form">
+                                    class="btn-action-form"
+                                    style="margin: 0;">
                                     <button type="submit" 
                                             class="btn-action btn-delete"
                                             onclick="return confirm('Вы уверены, что хотите удалить этот пост?')">

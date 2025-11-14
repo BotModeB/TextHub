@@ -22,7 +22,7 @@
                 </div>
                 
                 <div th:if="${#authentication.principal != 'anonymousUser'}" class="user-profile">
-                    <a th:href="@{'/users' + ${#authentication.principal.username} + '/profile/'}" class="username">
+                    <a th:href="@{'/users/' + ${#authentication.principal.username}} + '/profile'" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
                     <form th:action="@{/logout}" method="post">
@@ -66,6 +66,12 @@
                 <div class="info-card">
                     <h3>Дата регистрации</h3>
                     <p th:text="${#temporals.format(user.registrationDate, 'dd.MM.yyyy')}">01.01.2023</p>
+                </div>
+
+                <div class="info-card">
+                    <a th:href="@{/posts/{login}/channel(login=${user.login})}" class="username">
+                        <span th:text="${user.username}">Username</span>
+                    </a>
                 </div>
                 
                 <div class="info-card">

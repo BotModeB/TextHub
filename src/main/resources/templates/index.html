@@ -22,7 +22,7 @@
                 </div>
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />                
                                 <div th:if="${#authentication.principal != 'anonymousUser'}" class="user-profile">
-                    <a th:href="@{'/users' + ${#authentication.principal.username} + '/profile/'}" class="username">
+                    <a th:href="@{'/users/' + ${#authentication.principal.username} + '/profile'}" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
                     <form th:action="@{/logout}" method="post">
