@@ -25,7 +25,7 @@
                 </div>
                 
                 <div th:if="${#authentication.principal != 'anonymousUser'}" class="user-profile">
-                    <a th:href="@{'/users/' + ${#authentication.principal.username}} + '/profile'" class="username">
+                    <a th:href="@{'/users/' + ${#authentication.principal.username} + '/profile'}" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
                     <form th:action="@{/logout}" method="post">
@@ -59,7 +59,7 @@
                     <h2 class="post-title" th:text="${post.title}">Мой первый пост на TextHub</h2>
                     <div class="post-author">
                         <i class="fas fa-user"></i>
-                        <a th:href="@{'/users' + ${post.user.login} +'/profile/'}" 
+                        <a th:href="@{'/users/' + ${post.user.login} +'/profile'}" 
                         th:text="${post.user.username}"
                         style="text-decoration: none; color: inherit;">
                             Имя пользователя

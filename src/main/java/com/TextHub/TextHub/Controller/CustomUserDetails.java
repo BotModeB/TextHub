@@ -23,22 +23,19 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Временная реализация - возвращаем одну роль "ROLE_USER" для всех пользователей
-        // В реальном приложении роли должны храниться в базе данных
+        
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
     
     @Override
     public String getUsername() {
-        return user.getLogin(); // Используем login как username
+        return user.getLogin();
     }
 
-    // Для получения email 
     public String getEmail() {
         return user.getEmail();
     }
 
-    // Для получения ID пользователя
     public Long getUserId() {
         return user.getId();
     }

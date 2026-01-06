@@ -3,14 +3,11 @@ package com.TextHub.TextHub.Controller;
 import com.TextHub.TextHub.Entity.*;
 import com.TextHub.TextHub.Service.*;
 
-import org.attoparser.dom.Comment;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -26,7 +23,7 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 @Controller
 @RequestMapping("/posts")
 public class PostsController {
@@ -34,7 +31,7 @@ public class PostsController {
     private final LikeService likeService;
     private final CommentsService commentsService;
     private final UserService userService;
-    @Autowired
+
     public PostsController(PostService postService, LikeService likeService, CommentsService commentsService, UserService userService) {
         this.postService = postService;
         this.likeService = likeService;
@@ -42,28 +39,8 @@ public class PostsController {
         this.commentsService = commentsService;
     }
     
-    // @GetMapping("/public")
-    // public String showPostsPage(Model model, 
-    //                         @AuthenticationPrincipal CustomUserDetails userDetails) {
-    //     List<Post> posts = postService.getAllPosts();
-    //     Long currentUserId = userDetails != null ? userDetails.getUserId() : null;
-        
-    //     // Проверяем статус лайков для каждого поста
-    //     for (Post post : posts) {
-    //         if (currentUserId != null) {
-    //             post.setLikedByCurrentUser(post.isLikedBy(currentUserId));
-    //         }
-    //         // Обновляем счетчик лайков
-    //         post.setLikesCount(post.getLikes().size());
-    //     }
-        
-    //     model.addAttribute("posts", posts);
-    //     model.addAttribute("currentUserId", currentUserId);
-    //     return "posts";
-    // }
-
-@GetMapping("/public")
-public Object getPosts(
+    @GetMapping("/public")
+    public Object getPosts(
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable,
         @AuthenticationPrincipal CustomUserDetails userDetails,
         Model model,
@@ -77,14 +54,6 @@ public Object getPosts(
     
     return "posts";
 } 
-    // @GetMapping("/user-posts")
-    // public String showUserPostsPage(Model model, 
-    //                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
-    //     List<Post> posts = postService.getPostsByUser(userDetails.getUser());
-    //     model.addAttribute("posts", posts);
-    //     return "user-posts";
-    // }
-
     @GetMapping("/form")
     public String showForm(@RequestParam(required = false) Long id, Model model) {
         Post post = new Post();

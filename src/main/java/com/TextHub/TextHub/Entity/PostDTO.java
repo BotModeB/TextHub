@@ -15,33 +15,25 @@ public class PostDTO {
     @NotBlank(message = "Content cannot be empty")
     @Size(min = 10, max = 400, message = "Content must be between 10 and 400 characters")
     private String content;
-    
+
     private Long userId;
     private String username;
+    private String login;
     private int likesCount;
     private boolean likedByCurrentUser;
-    private User user;
     private Instant createdAt;
-    
-    public User getUser() {
-        return user;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
-    }
     
     public static PostDTO fromPost(Post post, Long currentUserId) {
         PostDTO dto = new PostDTO();
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setContent(post.getContent());
-        dto.setUser(post.getUser());
         dto.setCreatedAt(post.getCreatedAt()); 
         
         if (post.getUser() != null) {
             dto.setUserId(post.getUser().getId());
             dto.setUsername(post.getUser().getUsername());
+            dto.setLogin(post.getUser().getLogin());
         }
         
         dto.setLikesCount(post.getLikesCount());

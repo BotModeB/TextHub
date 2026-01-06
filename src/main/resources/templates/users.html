@@ -379,7 +379,7 @@
                 </div>
                 
                 <div th:if="${#authentication.principal != 'anonymousUser'}" class="user-profile">
-                    <a th:href="@{'/users/' + ${#authentication.principal.username}} + '/profile'" class="username">
+                    <a th:href="@{'/users/' + ${#authentication.principal.username} + '/profile'}" class="username">
                         <span th:text="${#authentication.principal.username}">Username</span>
                     </a>
                     <form th:action="@{/logout}" method="post">
@@ -449,7 +449,7 @@
         </section>
     </main>
     
-    <footer class="animate__animated animate__fadeInUp">
+    <footer class="animate__animated animate__fadeInUp" th:if="${false}">
         <div class="container footer-content">
             <div class="footer-logo">TextHub</div>
             <p class="footer-text">Социальная платформа для тех, кто ценит силу слова. Выражайте мысли, находите аудиторию, создавайте смыслы.</p>

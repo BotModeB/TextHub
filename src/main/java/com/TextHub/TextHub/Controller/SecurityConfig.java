@@ -9,12 +9,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -65,10 +63,11 @@ public class SecurityConfig {
                     "/webjars/**",
                     "/favicon.ico",
                     "/posts/public",
-                    "/static/**"
+                    "/static/**",
+                    "/ws/**"
                 ).permitAll()
                 .requestMatchers(HttpMethod.POST, "/posts/*/like").authenticated()
-                .requestMatchers("/posts/**", "/user/**").authenticated()
+                .requestMatchers("/posts/**", "/users/**", "/chats/**").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -87,7 +86,7 @@ public class SecurityConfig {
             )
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/posts/*/like", "/posts/*/delete", "/register")
+                .ignoringRequestMatchers("/posts/*/like", "/posts/*/delete", "/register", "/ws/**")
             )
             .sessionManagement(session -> session
                 .maximumSessions(1)
@@ -97,7 +96,12 @@ public class SecurityConfig {
                 .frameOptions(frame -> frame.deny())
                 .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED))
                 .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https:; script-src 'self' 'unsafe-inline' https://kit.fontawesome.com https://cdnjs.cloudflare.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com"))
+                    .policyDirectives("default-src 'self'; "
+                            + "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; "
+                            + "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; "
+                            + "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; "
+                            + "img-src 'self' https:; "
+                            + "script-src 'self' 'unsafe-inline' https://kit.fontawesome.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;"))
             );
         
         return http.build();

@@ -14,34 +14,5 @@ public class CommentsDTO {
     private String content;
     private Long postId;
     private Long userId;
-    private User user;
     private Instant createdAt;
-    
-    public User getUser() {
-        return user;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
-    }
-    
-    // public static PostDTO fromPost(Post post, Long currentUserId) {
-    //     PostDTO dto = new PostDTO();
-    //     dto.setId(post.getId());
-    //     dto.setTitle(post.getTitle());
-    //     dto.setContent(post.getContent());
-    //     dto.setUser(post.getUser());
-    //     dto.setCreatedAt(post.getCreatedAt()); 
-        
-    //     if (post.getUser() != null) {
-    //         dto.setUserId(post.getUser().getId());
-    //         dto.setUsername(post.getUser().getUsername());
-    //     }
-        
-    //     dto.setLikesCount(post.getLikesCount());
-    //     dto.setLikedByCurrentUser(currentUserId != null && 
-    //                             post.isLikedByUser(currentUserId));
-        
-    //     return dto;
-    // }
 }
