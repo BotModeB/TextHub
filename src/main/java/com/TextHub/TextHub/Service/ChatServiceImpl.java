@@ -6,6 +6,8 @@ import com.TextHub.TextHub.Repository.ChatRepository;
 import com.TextHub.TextHub.Repository.MessageRepository;
 import com.TextHub.TextHub.Repository.UserRepository;
 import com.TextHub.TextHub.exceptions.ResourceNotFoundException;
+import com.TextHub.app.mapper.ChatMapper;
+import com.TextHub.app.mapper.MessageMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class ChatServiceImpl implements ChatService {
     private final MessageRepository messageRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final MessageMapper messageMapper;
+    private final ChatMapper chatMapper;
 
     @Override
     public Chat getOrCreatePrivateChatWith(String otherLogin) {
@@ -88,9 +92,7 @@ public class ChatServiceImpl implements ChatService {
     @Transactional(readOnly = true)
     public List<MessageDTO> getChatMessages(Long chatId) {
         Chat chat = getChatForCurrentUser(chatId);
-        return messageRepository.findAllByChatOrderByCreatedAtAsc(chat).stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+        return messageMapper.toDtoList(messageRepository.findAllByChatOrderByCreatedAtAsc(chat));
     }
 
     @Override
@@ -109,10 +111,6 @@ public class ChatServiceImpl implements ChatService {
     }
 
     private ChatSummaryDTO buildSummary(Chat chat, User current) {
-        ChatSummaryDTO dto = new ChatSummaryDTO();
-        dto.setChatId(chat.getId());
-        dto.setTitle(chat.getTitle());
-
         List<ChatMember> members = chatMemberRepository.findByChat(chat);
 
         // companion for приватного чата (2 участника)
@@ -120,30 +118,33 @@ public class ChatServiceImpl implements ChatService {
                 .filter(cm -> !cm.getUser().getId().equals(current.getId()))
                 .findFirst()
                 .orElse(null);
+
+        String resolvedTitle = chat.getTitle();
+        String companionLogin = null;
+        String companionUsername = null;
         if (companion != null) {
-            dto.setCompanionLogin(companion.getUser().getLogin());
-            dto.setCompanionUsername(companion.getUser().getUsername());
+            companionLogin = companion.getUser().getLogin();
+            companionUsername = companion.getUser().getUsername();
+            if (resolvedTitle == null) {
+                resolvedTitle = companionUsername;
+            }
         }
 
         List<Message> latest = messageRepository.findLatestMessage(chat, PageRequest.of(0, 1));
-        if (!latest.isEmpty()) {
-            Message lm = latest.get(0);
-            dto.setLastMessageAt(lm.getCreatedAt());
+        Message lm = latest.isEmpty() ? null : latest.get(0);
+        String preview = null;
+        java.time.Instant lastAt = null;
+        if (lm != null) {
+            lastAt = lm.getCreatedAt();
             String content = lm.getContent();
-            dto.setLastMessagePreview(content.length() > 80 ? content.substring(0, 80) + "…" : content);
+            preview = content.length() > 80 ? content.substring(0, 80) + "…" : content;
         }
-        return dto;
-    }
 
-    private MessageDTO toDto(Message message) {
-        MessageDTO dto = new MessageDTO();
-        dto.setId(message.getId());
-        dto.setChatId(message.getChat().getId());
-        dto.setSenderId(message.getSender().getId());
-        dto.setSenderLogin(message.getSender().getLogin());
-        dto.setSenderUsername(message.getSender().getUsername());
-        dto.setContent(message.getContent());
-        dto.setCreatedAt(message.getCreatedAt());
-        return dto;
+        return chatMapper.toSummary(chat,
+                resolvedTitle,
+                lastAt,
+                preview,
+                companionLogin,
+                companionUsername);
     }
 }

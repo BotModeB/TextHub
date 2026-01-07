@@ -94,6 +94,13 @@ header {
     top: 76px;
     z-index: 90;
     backdrop-filter: blur(5px);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.secondary-nav.is-hidden {
+    transform: translateY(-110%);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .secondary-nav .container {

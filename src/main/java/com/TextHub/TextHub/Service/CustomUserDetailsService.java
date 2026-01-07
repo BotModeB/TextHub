@@ -3,7 +3,6 @@ package com.TextHub.TextHub.Service;
 import com.TextHub.TextHub.Controller.CustomUserDetails;
 import com.TextHub.TextHub.Entity.User;
 import com.TextHub.TextHub.Repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,7 +15,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    @Autowired
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

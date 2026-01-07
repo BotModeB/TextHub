@@ -9,54 +9,41 @@
 - WebSocket/STOMP + SockJS, SimpleBroker `/topic`, prefix `/app`
 - Font Awesome (webjars)
 
-## Быстрый старт
-1) Клонировать проект  
-`git clone https://github.com/<your-username>/TextHub.git`
+## Возможности
+- Публичные посты: лента, просмотр поста, создание/редактирование, лайки.
+- Профили пользователей и список пользователей.
+- Личные чаты: список чатов, комната чата, переименование чата, обмен сообщениями в реальном времени.
+- Аутентификация/авторизация через Spring Security (форма логина/регистрации).
+- CSP и заголовки безопасности вынесены в отдельный конфиг.
 
-2) Настроить БД (PostgreSQL)  
-```
-spring.datasource.url=jdbc:postgresql://localhost:5432/texthub
-spring.datasource.username=postgres
-spring.datasource.password=admin
-```
-При необходимости поменять значения в `src/main/resources/application.properties`.
+## Технологии
+- Backend: Spring Boot (Web, Security, Data JPA, WebSocket, Validation).
+- Frontend: Thymeleaf, CSS (Flex/Animate.css), JS (fetch, SockJS/STOMP).
+- БД: JPA (H2/PostgreSQL, в зависимости от настроек).
+- MapStruct для маппинга сущностей в DTO.
+- Тесты: Spring Boot Test, MockMvc.
 
-3) Запуск в dev  
-`./mvnw spring-boot:run` (или `mvnw.cmd spring-boot:run` на Windows)
-
-4) Открыть  
-`http://localhost:8080`
-
-## Основные возможности
-- Регистрация, логин, профиль пользователя.
-- Лента постов, создание поста, просмотр поста.
-- Лайки и комментарии.
-- Поиск пользователей и просмотр чужих постов.
-- Чаты 1:1 в реальном времени:
-  - список чатов (`/chats`), предпросмотр последнего сообщения;
-  - страница комнаты `/chats/{id}` с автопрокруткой, фиксированным инпутом;
-  - отправка/прием сообщений через STOMP (`/app/chats/{chatId}` → `/topic/chats/{chatId}`);
-  - переименование чата (форма на странице комнаты).
-
-## Как работает WebSocket
-- Эндпоинт: `/ws` (SockJS подключение).
-- Application destination prefix: `/app`.
-- Broker destinations: `/topic/**`.
-- На клиенте: подключение к `/ws`, подписка на `/topic/chats/{chatId}`, отправка в `/app/chats/{chatId}`.
+## Структура
+- `src/main/java/com/TextHub/TextHub`
+  - `Controller` — HTTP-контроллеры (посты, пользователи, чаты, auth), WebSocket-контроллер чатов.
+  - `config` — `WebSocketConfig`.
+  - `security` — `SecurityConfig`, `SecurityHeadersConfig`.
+  - `Service` — бизнес-логика постов, чатов, сообщений, лайков, комментариев, пользователей.
+  - `Repository` — JPA-репозитории.
+  - `Entity` — JPA-сущности и DTO.
+  - `exceptions` — `ResourceNotFoundException`.
+- `src/main/java/com/TextHub/app`
+  - `mapper` — MapStruct мапперы (Post, User, Message, Chat).
+  - `websocket` — `WsConstants`, `ChatMessagePayload`.
+- `src/main/resources/templates` — Thymeleaf страницы (`index`, `posts`, `post-page`, `post-form`, `users`, `profile`, `user-posts`, `login`, `registrations`, `chats`, `chat-room`, `channel`).
+- `src/main/resources/static` — `css/styles.css`, `js/layout.js`, `js/chat.js`.
+- `src/test/java/com/TextHub/TextHub` — базовые тесты: контекст, `/login` view, наличие `WebSocketConfig`.
 
 ## Архитектура
 - Слои: Controller → Service → Repository → Entity/DTO.
 - Безопасность: Spring Security + Thymeleaf extras; CSRF включен, для WebSocket разрешен `/ws/**`.
 - DTO для отдачи в шаблоны (`PostDTO`, `MessageDTO`, `ChatSummaryDTO`) вместо прямых Entity.
 - Чаты: `Chat`, `ChatMember`, `Message`; сервисы `ChatService`, `MessageService`.
-
-## Структура (ключевое)
-- `src/main/java/com/TextHub/TextHub/Controller` — MVC и WebSocket контроллеры.
-- `src/main/java/com/TextHub/TextHub/Service` — бизнес-логика.
-- `src/main/java/com/TextHub/TextHub/Repository` — JPA репозитории.
-- `src/main/java/com/TextHub/TextHub/Entity` — сущности и DTO.
-- `src/main/resources/templates` — Thymeleaf страницы.
-- `src/main/resources/static/css` — стили.
 
 ## Что улучшу дальше
 - Добавлю интеграционные тесты для WebSocket чатов.

@@ -2,9 +2,13 @@ package com.TextHub.TextHub.Controller;
 
 import com.TextHub.TextHub.Entity.MessageDTO;
 import com.TextHub.TextHub.Service.MessageService;
+import com.TextHub.app.websocket.ChatMessagePayload;
+import com.TextHub.app.websocket.WsConstants;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -17,11 +21,11 @@ public class ChatSocketController {
     private final MessageService messageService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chats/{chatId}")
-    public void handleChatMessage(@DestinationVariable Long chatId, MessageDTO payload, Principal principal) {
-        // Пока упрощаем: доверяем фронтенду, что пользователь пишет только в свои чаты.
-        // main-проверка осуществляется на обычных HTTP-запросах.
+    @MessageMapping(WsConstants.CHAT_DESTINATION)
+    public void handleChatMessage(@DestinationVariable Long chatId,
+                                  @Valid @Payload ChatMessagePayload payload,
+                                  Principal principal) {
         MessageDTO saved = messageService.sendMessage(chatId, payload.getContent(), principal.getName());
-        messagingTemplate.convertAndSend("/topic/chats/" + chatId, saved);
+        messagingTemplate.convertAndSend(WsConstants.TOPIC_PREFIX + "/chats/" + chatId, saved);
     }
 }

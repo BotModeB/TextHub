@@ -1,4 +1,4 @@
-package com.TextHub.TextHub.Controller;
+package com.TextHub.TextHub.security;
 
 import java.io.IOException;
 
@@ -14,12 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -36,8 +36,8 @@ public class SecurityConfig {
 
     public static class CsrfTokenLogger extends OncePerRequestFilter {
         @Override
-        protected void doFilterInternal(HttpServletRequest request, 
-                                        HttpServletResponse response, 
+        protected void doFilterInternal(HttpServletRequest request,
+                                        HttpServletResponse response,
                                         FilterChain filterChain) throws IOException, ServletException {
             CsrfToken token = (CsrfToken) request.getAttribute("_csrf");
             System.out.println("CSRF Token: " + (token != null ? token.getToken() : "null"));
@@ -45,7 +45,7 @@ public class SecurityConfig {
         }
     }
 
-@Bean
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
@@ -92,18 +92,14 @@ public class SecurityConfig {
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
             )
-            .headers(headers -> headers
-                .frameOptions(frame -> frame.deny())
-                .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED))
-                .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; "
-                            + "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; "
-                            + "style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; "
-                            + "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; "
-                            + "img-src 'self' https:; "
-                            + "script-src 'self' 'unsafe-inline' https://kit.fontawesome.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;"))
-            );
-        
+            .headers(headers -> {
+                try {
+                    SecurityHeadersConfig.configure(headers);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to configure security headers", e);
+                }
+            });
+
         return http.build();
     }
 }

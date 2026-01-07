@@ -4,9 +4,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +13,6 @@ import com.TextHub.TextHub.Repository.PostRepository;
 import com.TextHub.TextHub.Repository.UserRepository;
 import com.TextHub.TextHub.exceptions.ResourceNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Service
 @Transactional
 public class CommentsServiceImpl implements CommentsService {
@@ -26,7 +21,6 @@ public class CommentsServiceImpl implements CommentsService {
     private PostRepository postRepository;
     private UserRepository userRepository;
 
-    @Autowired
     public CommentsServiceImpl(CommentsRepository commentsRepository, UserService userService, PostRepository postRepository, UserRepository userRepository) {
         this.commentsRepository = commentsRepository;
         this.userService = userService;
