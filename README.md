@@ -46,7 +46,5 @@
 - Чаты: `Chat`, `ChatMember`, `Message`; сервисы `ChatService`, `MessageService`.
 
 ## Что улучшу дальше
-- Добавлю интеграционные тесты для WebSocket чатов.
-- Вынесу CSP в конфиг и добавлю nonce для inline-скриптов.
 - Подготовлю Docker Compose для app + PostgreSQL.
 - Переведу логику уведомлений о доставке/прочтении сообщений.
