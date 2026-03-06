@@ -3,11 +3,9 @@ package com.TextHub.TextHub;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.TextHub"})
 public class TextHubApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(TextHubApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(TextHubApplication.class, args);
+    }
 }
